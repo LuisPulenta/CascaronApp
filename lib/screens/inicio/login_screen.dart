@@ -1,12 +1,20 @@
+import 'dart:convert';
+
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cascaronapp/models/models.dart';
+import 'package:cascaronapp/screens/screens.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:cascaronapp/helpers/constants.dart';
 import 'package:cascaronapp/components/loader_component.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -14,11 +22,11 @@ class _LoginScreenState extends State<LoginScreen> {
 //----------------------- Variables -----------------------------
 //---------------------------------------------------------------
 
-  String _email = '';
-  String _password = '';
+  // String _email = '';
+  // String _password = '';
 
-  //String _email = '102131';
-  //String _password = '32766601';
+  String _email = 'LNUNEZ';
+  String _password = '123456';
 
   String _emailError = '';
   bool _emailShowError = false;
@@ -30,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _passwordShow = false;
   bool _showLoader = false;
 
-//---------------------------------------------------------------
+  //---------------------------------------------------------------
 //----------------------- initState -----------------------------
 //---------------------------------------------------------------
 
@@ -113,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 10,
                           ),
                           _showRememberme(),
-                          _showButtons(),
+                          _showButton(),
                         ],
                       ),
                     ),
@@ -218,10 +226,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 //-----------------------------------------------------------------
-//--------------------- _showButtons ------------------------------
+//--------------------- _showButton -------------------------------
 //-----------------------------------------------------------------
 
-  Widget _showButtons() {
+  Widget _showButton() {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20),
       child: Row(
@@ -254,18 +262,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 //-----------------------------------------------------------------
-//--------------------- _login ------------------------------------
-//-----------------------------------------------------------------
-
-  void _login() async {
-    FocusScope.of(context).unfocus(); //Oculta el teclado
-
-    if (!validateFields()) {
-      return;
-    }
-  }
-
-//-----------------------------------------------------------------
 //--------------------- validateFields ----------------------------
 //-----------------------------------------------------------------
 
@@ -295,5 +291,109 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {});
 
     return isValid;
+  }
+
+//-----------------------------------------------------------------
+//--------------------- _storeUser --------------------------------
+//-----------------------------------------------------------------
+  void _storeUser(String body) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isRemembered', true);
+    await prefs.setString('userBody', body);
+    await prefs.setString('date', DateTime.now().toString());
+  }
+
+//-----------------------------------------------------------------
+//--------------------- _login ------------------------------------
+//-----------------------------------------------------------------
+
+  void _login() async {
+    FocusScope.of(context).unfocus(); //Oculta el teclado
+
+    setState(() {
+      _passwordShow = false;
+    });
+
+    if (!validateFields()) {
+      return;
+    }
+
+    setState(() {
+      _showLoader = true;
+    });
+
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      setState(() {
+        _showLoader = false;
+      });
+      await showAlertDialog(
+          context: context,
+          title: 'Error',
+          message: 'Verifica que estes conectado a internet.',
+          actions: <AlertDialogAction>[
+            const AlertDialogAction(key: null, label: 'Aceptar'),
+          ]);
+      return;
+    }
+
+    Map<String, dynamic> request = {
+      'Email': _email,
+      'password': _password,
+    };
+
+    var url = Uri.parse('${Constants.apiUrl}/Api/Account/GetUserByEmail');
+    var response = await http.post(
+      url,
+      headers: {
+        'content-type': 'application/json',
+        'accept': 'application/json',
+      },
+      body: jsonEncode(request),
+    );
+
+    if (response.statusCode >= 400) {
+      setState(() {
+        _passwordShowError = true;
+        _passwordError = 'Email o contraseña incorrectos';
+        _showLoader = false;
+      });
+      return;
+    }
+
+    var body = response.body;
+    var decodedJson = jsonDecode(body);
+    var user = User.fromJson(decodedJson);
+
+    if (user.contrasena.toLowerCase() != _password.toLowerCase()) {
+      setState(() {
+        _showLoader = false;
+        _passwordShowError = true;
+        _passwordError = 'Email o contraseña incorrectos';
+      });
+      return;
+    }
+
+    if (user.habilitaAPP != 1) {
+      setState(() {
+        _showLoader = false;
+        _passwordShowError = true;
+        _passwordError = 'Usuario no habilitado';
+      });
+      return;
+    }
+
+    if (_rememberme) {
+      _storeUser(body);
+    }
+
+    if (user.contrasena == _password) {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                    user: user,
+                  )));
+    }
   }
 }
