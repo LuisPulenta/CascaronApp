@@ -1,3 +1,4 @@
+import 'package:cascaronapp/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:cascaronapp/models/models.dart';
 import 'package:cascaronapp/screens/screens.dart';
@@ -36,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rowing Material App'),
+        title: const Text('Cascaron App'),
         centerTitle: true,
       ),
       body: _getBody(),
@@ -56,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xff242424),
-              Color(0xff8c8c94),
+              AppTheme.primary,
+              AppTheme.secondary,
             ],
           ),
         ),
@@ -106,8 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xff8c8c94),
-              Color(0xff8c8c94),
+              AppTheme.secondary,
+              AppTheme.primary,
             ],
           ),
         ),
@@ -119,8 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xff242424),
-                    Color(0xff8c8c94),
+                    AppTheme.primary,
+                    AppTheme.secondary,
                   ],
                 ),
               ),
@@ -158,27 +159,123 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             //--------------------------------------------------------------
+            //---------------------- Menú ----------------------------------
+            //--------------------------------------------------------------
 
             Row(
               children: [
                 Expanded(
                   child: ListTile(
                     leading: const Icon(
-                      Icons.inventory_2,
+                      Icons.favorite,
                       color: Colors.white,
                     ),
                     tileColor: const Color(0xff8c8c94),
-                    title: const Text('Materiales',
+                    title: const Text('Pantalla Simple',
                         style: TextStyle(fontSize: 15, color: Colors.white)),
-                    onTap: () async {},
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Pantalla1Screen(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
             ),
+            //--------------------------------------------------------------
+            Row(
+              children: [
+                Expanded(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.grade,
+                      color: Colors.white,
+                    ),
+                    tileColor: const Color(0xff8c8c94),
+                    title: const Text('Pantalla Slide',
+                        style: TextStyle(fontSize: 15, color: Colors.white)),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Pantalla2Screen(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            //--------------------------------------------------------------
+            Row(
+              children: [
+                Expanded(
+                  child: ExpansionTile(
+                    collapsedIconColor: Colors.white,
+                    iconColor: Colors.white,
+                    leading: const Icon(
+                      Icons.dataset,
+                      color: Colors.white,
+                    ),
+                    title: const Text("Menú desplegable",
+                        style: TextStyle(fontSize: 15, color: Colors.white)),
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.handyman,
+                            color: Colors.white,
+                          ),
+                          tileColor: const Color(0xff8c8c94),
+                          title: const Text('Pantalla 3',
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.white)),
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Pantalla3Screen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.engineering,
+                            color: Colors.white,
+                          ),
+                          tileColor: const Color(0xff8c8c94),
+                          title: const Text('Pantalla 4',
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.white)),
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Pantalla4Screen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            //--------------------------------------------------------------
             const Divider(
               color: Colors.white,
               height: 1,
             ),
+            //--------------------------------------------------------------
             ListTile(
               leading: const Icon(
                 Icons.logout,

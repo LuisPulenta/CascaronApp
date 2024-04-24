@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cascaronapp/models/models.dart';
 import 'package:cascaronapp/screens/screens.dart';
+import 'package:cascaronapp/themes/app_theme.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:cascaronapp/helpers/constants.dart';
@@ -71,8 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color.fromARGB(255, 240, 228, 228),
-                    Color(0xff8c8c94),
+                    AppTheme.primary,
+                    AppTheme.secondary,
                   ],
                 ),
               ),
@@ -216,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return CheckboxListTile(
       title: const Text('Recordarme:'),
       value: _rememberme,
-      activeColor: const Color(0xFF781f1e),
+      activeColor: AppTheme.primary,
       onChanged: (value) {
         setState(() {
           _rememberme = value!;
@@ -327,6 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _showLoader = false;
       });
+
       await showAlertDialog(
           context: context,
           title: 'Error',
