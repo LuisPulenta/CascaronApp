@@ -7,6 +7,8 @@ class AppTheme {
 //----------------------------- lightTheme -----------------------------
 
   static final ThemeData lightTheme = ThemeData.light().copyWith(
+    useMaterial3: true,
+
     //Color primario
     primaryColor: primary,
 
@@ -15,6 +17,8 @@ class AppTheme {
       color: primary,
       elevation: 0,
       centerTitle: true,
+      titleTextStyle: TextStyle(color: Colors.white),
+      
     ),
 
     //TextButtonTheme

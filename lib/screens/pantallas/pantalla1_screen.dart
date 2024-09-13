@@ -10,9 +10,13 @@ class Pantalla1Screen extends StatelessWidget {
         title: const Text('Pantalla 1'),
         centerTitle: true,
       ),
-      backgroundColor: Colors.blue[300],
+      backgroundColor: Color.fromARGB(255, 232, 235, 140),
       body: const Center(
         child: Text('Pantalla 1'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
       ),
     );
   }
